@@ -1,0 +1,5 @@
+plt.plot(wav,bri)
+plt.xlabel('Wavelength')
+plt.ylabel('Intensity')
+plt.title('First Spectra')
+plt.show()
