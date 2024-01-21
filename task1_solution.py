@@ -6,15 +6,16 @@ from scipy.optimize import curve_fit
 
 # Reading data from spectra text file given
 
-path = 'C:\\Users\\heman\\OneDrive\\Desktop\\BITS\\AD ASTRA\\Horn Antennae Practice\\galaxy_21cm_spectrum-20240111T043850Z-001'
+path = '/home/switchblade/Coding/Horn-Antenna/galaxy_21cm_spectrum-20240111T043850Z-001'
 
 color=['blue','green','red','cyan','magenta','yellow','k','pink','orange','gray','brown','lime']
 # iterate over files in that path
 j=0
-files=[]
-for filename in os.listdir(path):
-    files.append(filename[11]+filename[12]+filename[13]+filename[14])
-for filename in os.listdir(path):
+dist=[]
+velocities=[]
+for filename in sorted(os.listdir(path)):
+    dist.append(filename[11]+filename[12]+filename[13]+filename[14])
+for filename in sorted(os.listdir(path)):
     if filename.endswith(".txt"):  # check if the file is a .txt file
         file_path = os.path.join(path, filename)
         df = pd.read_csv(file_path)
@@ -42,13 +43,12 @@ for filename in os.listdir(path):
         #plt.annotate(f'{filename[11]}{filename[12]}{filename[13]}{filename[14]}', (wav[max_index],bri[max_index]), textcoords="offset points", xytext=(10,7), ha='center')
         plt.grid()
 
-
         rest_wavelength=21.106114054160
         shift_wavelength=h_alpha_wavelength-rest_wavelength
         doppler_velocity=(shift_wavelength/rest_wavelength)*299792.458
 
-        #print(f'Doppler Velocity: {doppler_velocity} km/s.')
-
+        velocities.append(doppler_velocity)
+        
         #Gaussian Fit
         def gaussian_function(x,a,mu,sigma):
             return a*np.exp(-(x-mu)**2/(sigma**2))
@@ -60,9 +60,7 @@ for filename in os.listdir(path):
         a_opt,mu_opt,sigma_opt=popt
         x_opt=np.linspace(min(wav),max(wav),100)
         y_opt=gaussian_function(x_opt,a_opt,mu_opt,sigma_opt)
-        str=filename[11]+filename[12]+filename[13]+filename[14]
-        plt.plot(x_opt,y_opt,color=color[j],label=str)      
+        plt.plot(x_opt,y_opt,color=color[j],label=dist[j])      
         j+=1
-
 plt.legend()
 plt.show()
